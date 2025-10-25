@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Event Hub</title>
+</head>
+
+<body>
+    <header>
+        <h1>Event Hub</h1>
+        <nav>
+            <ul>
+                <a href="upcoming-events" <li>Upcoming Events</li> />
+                <a href="past-events" <li>Past Events</li> />
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="upcoming-events">
+                <h2>Upcoming Events</h2>
+                <article></article>
+                <article></article>
+        </section>
+        <section id="past-events"></section>
+    </main>
+    
+</body>
+
+</html>
