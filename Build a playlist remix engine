@@ -1,0 +1,123 @@
+const playlists = [
+  [
+    {
+      trackId: "trk101",
+      artist: "Velvet Comet",
+      title: "Crimson Afterglow",
+      votes: 5,
+      bpm: 122
+    },
+    {
+      trackId: "trk102",
+      artist: "Neon Harbor",
+      title: "Static Horizon",
+      votes: 2,
+      bpm: 108
+    },
+    {
+      trackId: "trk103",
+      artist: "Lunar Arcade",
+      title: "Midnight Frequency",
+      votes: 4,
+      bpm: 128
+    }
+  ],
+  [
+    {
+      trackId: "trk201",
+      artist: "Solar Echo",
+      title: "Glass Skyline",
+      votes: 3,
+      bpm: 115
+    },
+    {
+      trackId: "trk202",
+      artist: "Velvet Comet",
+      title: "Satellite Hearts",
+      votes: 6,
+      bpm: 124
+    }
+  ]
+];
+
+// 1️⃣ Flatten playlists
+function flattenPlaylists(playlists) {
+  if (!Array.isArray(playlists)) return [];
+
+  const result = [];
+
+  for (let i = 0; i < playlists.length; i++) {
+    const playlist = playlists[i];
+
+    for (let j = 0; j < playlist.length; j++) {
+      const track = playlist[j];
+
+      result.push({
+        ...track,
+        source: [i, j]
+      });
+    }
+  }
+
+  return result;
+}
+
+// 2️⃣ Score tracks
+function scoreTracks(tracks) {
+  return tracks.map(track => ({
+    ...track,
+    score: track.votes * 10 - Math.abs(track.bpm - 120)
+  }));
+}
+
+// 3️⃣ Remove duplicates (keep first)
+function dedupeTracks(tracks) {
+  const seen = new Set();
+  const result = [];
+
+  for (let track of tracks) {
+    if (!seen.has(track.trackId)) {
+      seen.add(track.trackId);
+      result.push(track);
+    }
+  }
+
+  return result;
+}
+
+// 4️⃣ Enforce artist quota
+function enforceArtistQuota(tracks, maxPerArtist) {
+  const count = {};
+  const result = [];
+
+  for (let track of tracks) {
+    const artist = track.artist;
+
+    if (!count[artist]) count[artist] = 0;
+
+    if (count[artist] < maxPerArtist) {
+      result.push(track);
+      count[artist]++;
+    }
+  }
+
+  return result;
+}
+
+// 5️⃣ Build schedule
+function buildSchedule(tracks) {
+  return tracks.map((track, index) => ({
+    slot: index + 1,
+    trackId: track.trackId
+  }));
+}
+// 6️⃣ Main function (pipeline)
+function remixPlaylist(playlists, maxPerArtist) {
+  const flattened = flattenPlaylists(playlists);
+  const scored = scoreTracks(flattened);
+  const deduped = dedupeTracks(scored);
+  const limited = enforceArtistQuota(deduped, maxPerArtist);
+  const schedule = buildSchedule(limited);
+
+  return schedule;
+}
