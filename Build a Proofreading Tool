@@ -1,0 +1,78 @@
+// Check if a word is a palindrome
+function isPalindrome(word) {
+  const lower = word.toLowerCase();
+  const reversed = lower.split("").reverse().join("");
+
+  return lower === reversed;
+}
+
+// Find indices of words that are not palindromes
+function findPalindromeBreaks(words) {
+  const breaks = [];
+
+  for (let i = 0; i < words.length; i++) {
+    if (!isPalindrome(words[i])) {
+      breaks.push(i);
+    }
+  }
+
+  return breaks;
+}
+
+// Find repeated phrases
+function findRepeatedPhrases(words, phraseLength) {
+  if (phraseLength >= words.length) {
+    return [];
+  }
+
+  const phraseMap = {};
+  const result = [];
+
+  // Store all phrase positions
+  for (let i = 0; i <= words.length - phraseLength; i++) {
+    const phrase = words.slice(i, i + phraseLength).join(" ");
+
+    if (!phraseMap[phrase]) {
+      phraseMap[phrase] = [];
+    }
+
+    phraseMap[phrase].push(i);
+  }
+
+  // Collect repeated phrase indices
+  for (const phrase in phraseMap) {
+    if (phraseMap[phrase].length > 1) {
+      result.push(...phraseMap[phrase]);
+    }
+  }
+
+  return result.sort((a, b) => a - b);
+}
+
+// Analyze multiple texts
+function analyzeTexts(texts, phraseLength) {
+  if (texts.length === 0) {
+    return [];
+  }
+
+  const analysis = [];
+
+  for (let i = 0; i < texts.length; i++) {
+    analysis.push({
+      repeatedPhrases: findRepeatedPhrases(texts[i], phraseLength),
+      palindromeBreaks: findPalindromeBreaks(texts[i])
+    });
+  }
+
+  return analysis;
+}
+
+// Example usage
+const texts = [
+  ["level", "racecar", "hello", "level", "racecar"],
+  ["madam", "noon", "world", "madam", "noon"]
+];
+
+const result = analyzeTexts(texts, 2);
+
+console.log(result);
