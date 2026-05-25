@@ -1,0 +1,147 @@
+// Parse shipment strings into objects
+function parseShipment(rawData) {
+  const result = [];
+  const seen = new Set();
+
+  for (let i = 0; i < rawData.length; i++) {
+    const parts = rawData[i].split("|");
+
+    const sku = parts[0];
+
+    // Ignore duplicate SKUs
+    if (seen.has(sku)) {
+      continue;
+    }
+
+    seen.add(sku);
+
+    const item = {
+      sku: sku,
+      name: parts[1],
+      qty: Number(parts[2]),
+      expires: parts[3],
+      zone: parts[4] || "general"
+    };
+
+    result.push(item);
+  }
+
+  return result;
+}
+
+// Plan restocking actions
+function planRestock(pantry, shipment) {
+  const actions = [];
+
+  for (let i = 0; i < shipment.length; i++) {
+    const item = shipment[i];
+
+    // Discard invalid quantities
+    if (item.qty <= 0) {
+      actions.push({
+        type: "discard",
+        item: item
+      });
+      continue;
+    }
+
+    let exists = false;
+
+    for (let j = 0; j < pantry.length; j++) {
+      if (pantry[j].sku === item.sku) {
+        exists = true;
+        break;
+      }
+    }
+
+    if (exists) {
+      actions.push({
+        type: "restock",
+        item: item
+      });
+    } else {
+      actions.push({
+        type: "donate",
+        item: item
+      });
+    }
+  }
+
+  return actions;
+}
+
+// Group actions by storage zone
+function groupByZone(actions) {
+  const grouped = {};
+
+  for (let i = 0; i < actions.length; i++) {
+    const action = actions[i];
+    const zone = action.item.zone;
+
+    if (!grouped[zone]) {
+      grouped[zone] = [];
+    }
+
+    grouped[zone].push(action);
+  }
+
+  return grouped;
+}
+
+// Deep copy pantry
+function clonePantry(pantry) {
+  const cloned = [];
+
+  for (let i = 0; i < pantry.length; i++) {
+    cloned.push({
+      sku: pantry[i].sku,
+      name: pantry[i].name,
+      qty: pantry[i].qty,
+      expires: pantry[i].expires,
+      zone: pantry[i].zone
+    });
+  }
+
+  return cloned;
+}
+
+// Example pantry
+const pantry = [
+  {
+    sku: "A101",
+    name: "Rice",
+    qty: 10,
+    expires: "2026-12-01",
+    zone: "dry"
+  },
+  {
+    sku: "B205",
+    name: "Milk",
+    qty: 5,
+    expires: "2025-06-10",
+    zone: "cold"
+  }
+];
+
+// Raw shipment data
+const rawShipment = [
+  "A101|Rice|20|2026-12-01|dry",
+  "C300|Beans|15|2027-01-01|dry",
+  "D400|Yogurt|0|2025-06-01|cold",
+  "E500|Soap|8|2028-05-01"
+];
+
+// Process shipment
+const parsedShipment = parseShipment(rawShipment);
+
+// Clone pantry
+const pantryCopy = clonePantry(pantry);
+
+// Plan actions
+const actions = planRestock(pantryCopy, parsedShipment);
+
+// Group by zone
+const groupedActions = groupByZone(actions);
+
+// Log final grouped result
+console.log(groupedActions);
