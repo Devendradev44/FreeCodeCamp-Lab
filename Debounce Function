@@ -1,0 +1,19 @@
+functiondebounce(fn,delay) {
+lettimer;
+
+return (...args) => {
+clearTimeout(timer);
+
+timer=setTimeout(() => {
+fn(...args);
+    },delay);
+  };
+}
+
+constsearch=debounce((text) => {
+console.log("Searching:",text);
+},500);
+
+search("R");
+search("Re");
+search("React");
