@@ -1,0 +1,16 @@
+functionthrottle(fn,delay) {
+letlastCall=0;
+
+return (...args) => {
+constnow=Date.now();
+
+if (now-lastCall>=delay) {
+lastCall=now;
+fn(...args);
+    }
+  };
+}
+
+constlog=throttle(() => {
+console.log("Button clicked");
+},1000);
