@@ -1,0 +1,30 @@
+classLRUCache {
+  constructor(capacity) {
+this.capacity=capacity;
+this.cache=newMap();
+  }
+
+  get(key) {
+if (!this.cache.has(key))return-1;
+
+constvalue=this.cache.get(key);
+
+this.cache.delete(key);
+this.cache.set(key,value);
+
+returnvalue;
+  }
+
+  put(key,value) {
+if (this.cache.has(key)) {
+this.cache.delete(key);
+    }
+
+this.cache.set(key,value);
+
+if (this.cache.size>this.capacity) {
+constoldest=this.cache.keys().next().value;
+this.cache.delete(oldest);
+    }
+  }
+}
