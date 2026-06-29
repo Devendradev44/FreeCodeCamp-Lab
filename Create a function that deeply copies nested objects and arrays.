@@ -1,0 +1,26 @@
+functiondeepClone(obj) {
+if (obj===null||typeofobj!=="object") {
+returnobj;
+  }
+
+if (Array.isArray(obj)) {
+returnobj.map(deepClone);
+  }
+
+constclone= {};
+
+for (letkeyinobj) {
+clone[key]=deepClone(obj[key]);
+  }
+
+returnclone;
+}
+
+constuser= {
+  name:"Dev",
+  address: {
+    city:"Bangalore"
+  }
+};
+
+constcopy=deepClone(user);
