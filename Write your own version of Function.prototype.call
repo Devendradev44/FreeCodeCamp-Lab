@@ -1,0 +1,15 @@
+Function.prototype.myCall=function(context, ...args) {
+context.fn=this;
+
+constresult=context.fn(...args);
+
+deletecontext.fn;
+
+returnresult;
+};
+
+functiongreet(city) {
+console.log(`Hi${this.name} from${city}`);
+}
+
+greet.myCall({ name:"Dev" },"Kurnool");
