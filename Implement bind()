@@ -1,0 +1,18 @@
+Function.prototype.myBind=function(context, ...args) {
+constfn=this;
+
+returnfunction (...newArgs) {
+returnfn.apply(context, [...args, ...newArgs]);
+  };
+};
+
+functiongreet(msg) {
+console.log(msg,this.name);
+}
+
+constbound=greet.myBind(
+  { name:"Dev" },
+"Hello"
+);
+
+bound();
