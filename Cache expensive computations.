@@ -1,0 +1,23 @@
+functionmemoize(fn) {
+constcache= {};
+
+returnfunction (...args) {
+constkey=JSON.stringify(args);
+
+if (cache[key]) {
+returncache[key];
+    }
+
+cache[key]=fn(...args);
+
+returncache[key];
+  };
+}
+
+constadd=memoize((a,b) => {
+console.log("Computing...");
+returna+b;
+});
+
+console.log(add(2,3));
+console.log(add(2,3));
